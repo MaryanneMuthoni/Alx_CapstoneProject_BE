@@ -2,6 +2,11 @@
 
 Create an API to manage a school records system where student details can be added which include personal information, academic information, financial information, contact information, teachers, classes, attendance, enrollment and parent/guardian information. The system will create, add, update and delete student records from the system.
 
+
+**ERD Diagram with entities and relationships:**
+
+<img width="1101" height="1150" alt="ERD 1 (4)" src="https://github.com/user-attachments/assets/ca030fef-26fd-49e2-b87a-a95222e99042" />
+
 ### Features
 
 - CRUD operations for students
