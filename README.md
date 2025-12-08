@@ -3,7 +3,7 @@
 Create an API to manage a school records system where student details can be added which include personal information, academic information, financial information, contact information, teachers, classes, attendance, enrollment and parent/guardian information. The system will create, add, update and delete student records from the system.
 
 
-**ERD Diagram with entities and relationships:**
+<ins> **ERD Diagram with entities and relationships:** <ins>
 
 <img width="1101" height="1150" alt="ERD 1 (4)" src="https://github.com/user-attachments/assets/ca030fef-26fd-49e2-b87a-a95222e99042" />
 
@@ -56,183 +56,108 @@ ID, full_name, address, phone_number
 | Get children of a particular parent through StudentParent| GET | /parents/{id}/students/|
 
 
-StudentParent: This is a joint table between Student and Parent with the following fields: student_id(ForeignKey), parent_id(ForeignKey), relationship_type, is_primary_guardian.
+3. **StudentParent:**
+
+This is a joint table between Student and Parent with the following fields: student_id(ForeignKey), parent_id(ForeignKey), relationship_type, is_primary_guardian.
 Class/ Grade: ID, name, teacher_id(ForeignKeyField linking with Teacher), stream.
 
-Description
-Method
-Enpoint
-Get all classes
-GET
-/classes/
-Create class
-POST
-/classes/
-Get a particular class record
-GET
-/classes/<id>/
-Update class record
-PUT
-/classes/<id>/
-Delete class record
-DELETE
-/classes/<id>/
+| Description | Method | Enpoint|
+|-------------|--------|--------|
+| Get all classes| GET | /classes/ |
+| Create class | POST | /classes/ |
+| Get a particular class record | GET | /classes/<id>/ |
+| Update class record | PUT | /classes/<id>/
+| Delete class record | DELETE | /classes/<id>/ |
 
 
-Teacher: ID, name, phone, email.
+4. **Teacher:**
 
-Description
-Method
-Enpoint
-Get all teacher records
-GET
-/teachers/
-Add a teacher
-POST
-/teachers/
-Get a particular teacher
-GET
-/teachers/<id>
-Edit teacher record
-PUT
-/teachers/<id>
-Delete teacher record
-DELETE
-/teachers/<id>
-Get subjects teachers teach
-GET
-/teachers/<id>/subjects
-Get classes teachers are class teachers of
-GET
-/teachers/<id>/classes
+ID, name, phone, email.
+
+| Description | Method | Enpoint|
+|-------------|--------|--------|
+| Get all teacher records | GET | /teachers/ |
+| Add a teacher | POST | /teachers/
+| Get a particular teacher | GET |/teachers/<id> |
+| Edit teacher record | PUT| /teachers/<id> |
+| Delete teacher record | DELETE | /teachers/<id> |
+| Get subjects teachers teach | GET | /teachers/<id>/subjects |
+| Get classes teachers are class teachers of | GET | /teachers/<id>/classes |
 
 
-Subject:  ID, name, teacher_id(Foreign Key linking with Teacher model)
+5. **Subject:**
 
-Description
-Method
-Enpoint
-Get all subjects
-GET
-/subjects/
-Create subject entries
-POST
-/subjects/
-Get a particular subject
-GET
-/subjects/<id>/
-Update particular subject record
-PUT
-/subjects/<id>/
-Delete subject record
-DELETE
-/subjects/<id>/
+ID, name, teacher_id(Foreign Key linking with Teacher model)
+
+| Description | Method | Enpoint|
+|-------------|--------|--------|
+| Get all subjects | GET | /subjects/ |
+| Create subject entries | POST | /subjects/ |
+| Get a particular subject | GET | /subjects/<id>/ |
+| Update particular subject record | PUT | /subjects/<id>/ |
+| Delete subject record | DELETE | /subjects/<id>/
 
 
-Performance: ID, subject_id(Foreign Key linking with Subject),  score, exam_type, academic_year, term, student(Foreign Key linking with Student), date_entered.
+6. **Performance:**
 
-Description
-Method
-Enpoint
-Get all performance records
-GET
-/performance/
-Add performance record
-POST
-/performance/
-Get particular performance record
-GET
-/performance/<id>
-Update particular performance record
-PUT
-/performance/<id>
-Delete particular performance record
-DELETE
-/performance/<id>
+ ID, subject_id(Foreign Key linking with Subject),  score, exam_type, academic_year, term, student(Foreign Key linking with Student), date_entered.
+
+| Description | Method | Enpoint|
+|-------------|--------|--------|
+| Get all performance records | GET | /performance/ |
+| Add performance record| POST| /performance/ |
+| Get particular performance record| GET| /performance/<id> |
+| Update particular performance record| PUT| /performance/<id> |
+| Delete particular performance record| DELETE| /performance/<id> |
 
 
-Attendance: ID, class_id(ForeignKey), student_id(Foreign Key linking with Student), status, date
+7. **Attendance:**
 
-Description
-Method
-Enpoint
-Get particular attendance record
-GET
-/attendance/{id}/
-Add attendance record
-POST
-/attendance/
-Get all attendance records
-GET
-/attendance/
-Update attendance record
-PUT
-/attendance/{id}/
-Delete attendance record
-DELETE
-/attendance/{id}/
+ID, class_id(ForeignKey), student_id(Foreign Key linking with Student), status, date
+
+| Description | Method | Enpoint|
+|-------------|--------|--------|
+| Get particular attendance record | GET | /attendance/{id}/ |
+| Add attendance record | POST | /attendance/ |
+| Get all attendance records | GET| /attendance/ |
+| Update attendance record | PUT | /attendance/{id}/ |
+| Delete attendance record | DELETE | /attendance/{id}/ |
 
 
-Invoices: ID, student_id(Foreign Key linking with Student), total_amount, amount_due, payment_due_date, status, term, academic_year.
+8. **Invoices:**
 
-Description
-Method
-Enpoint
-Get all invoices
-GET
-/invoices/
-Add invoice record
-POST
-/invoices/
-Get a particular invoice
-GET
-/invoices/{id}/
-Update a particular invoice
-PUT
-/invoices/{id}/
-Delete an invoice record
-DELETE
-/invoices/{id}/
-Get an invoice record from student table
-GET
-/students/{id}/invoices/
+ID, student_id(Foreign Key linking with Student), total_amount, amount_due, payment_due_date, status, term, academic_year.
+
+| Description | Method | Enpoint|
+|-------------|--------|--------|
+| Get all invoices | GET | /invoices/ |
+| Add invoice record| POST| /invoices/ |
+| Get a particular invoice| GET| /invoices/{id}/ |
+| Update a particular invoice| PUT| /invoices/{id}/ |
+| Delete an invoice record| DELETE| /invoices/{id}/ |
+| Get an invoice record from student table| GET | /students/{id}/invoices/ |
 
 
-Payments: ID, invoice_id(ForeignKey), amount_paid, payment_method, payment_date, reference_number
+9. **Payments:**
+
+ID, invoice_id(ForeignKey), amount_paid, payment_method, payment_date, reference_number
+
+| Description | Method | Enpoint|
+|-------------|--------|--------|
+| Get all payment records| GET | /payments/ |
+| Update existing payment record | POST| /payments/ |
+| Get particular payment record | GET| /payments/<id> |
 
 
-Description
-Method
-Enpoint
-Get all payment records
-GET
-/payments/
-Update existing payment record
-POST
-/payments/
-Get particular payment record
-GET
-/payments/<id>
+10. **Enrollment:**
 
+ID, student_id(ForeignKey), class_id(ForeignKey), academic_year, date_enrolled, date_left, status.
 
-Enrollment: ID, student_id(ForeignKey), class_id(ForeignKey), academic_year, date_enrolled, date_left, status.
-
-Description
-Method
-Enpoint
-Get all enrollments
-GET
-/enrollments/
-Get particular students enrollment
-GET
-/enrollments/{id}/
-Create new enrollment
-POST
-/enrollments/
-Update particular enrollment
-PUT
-/enrollments/{id}/
-Delete particular enrollment
-DELETE
-/enrollments/{id}/
+| Description | Method | Enpoint|
+|-------------|--------|--------|
+| Get all enrollments | GET | /enrollments/|
+| Get particular students enrollment | GET | /enrollments/{id}/ |
+| Create new enrollment | POST |/enrollments/|
+| Update particular enrollment | PUT | /enrollments/{id}/ |
+| Delete particular enrollment | DELETE |/enrollments/{id}/ |
 
