@@ -30,6 +30,11 @@ class Student(models.Model):
     profile_photo = models.ImageField(upload_to="students/", null=True, blank=True)
     grade = models.ForeignKey("Grade", on_delete=models.SET_NULL, null=True, related_name="students")
 
+    class Meta:
+        '''Default order and name for model in admin and forms'''
+        ordering=['first_name', 'last_name']
+        verbose_name='Student details'
+
     def __str__(self):
         return f'Student: {self.first_name} {self.last_name}'
 
@@ -42,6 +47,11 @@ class Parent(models.Model):
     address = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=50)
     email = models.EmailField(null=True, blank=True)
+
+    class Meta:
+        '''Default order and name for model in admin and forms'''
+        ordering=['full_name']
+        verbose_name='Parent details'
 
     def __str__(self):
         return f'Parent: {self.full_name}'
@@ -61,7 +71,10 @@ class StudentParent(models.Model):
 
     relationship_type = models.CharField(max_length=1, choices=RELATIONSHIP_CHOICES)
     is_primary_guardian = models.BooleanField(default=False)
-
+    
+    class Meta:
+        '''Name for model in admin and forms'''
+        verbose_name='Student-Parent join table'
 
 # Grade/Class table/model
 class Grade(models.Model):
@@ -70,6 +83,11 @@ class Grade(models.Model):
     name = models.IntegerField(help_text="Enter name of the class")
     stream = models.CharField(max_length=20,help_text="Enter stream name")
     teacher = models.ForeignKey("Teacher", on_delete=models.SET_NULL, null=True, related_name="classes")
+
+    class Meta:
+        '''Default order and name for model in admin and forms'''
+        ordering=['name']
+        verbose_name='Class details'
 
     def __str__(self):
         return f'Grade: {self.name} {self.stream}'
@@ -83,6 +101,11 @@ class Teacher(models.Model):
     phone_number = models.CharField(max_length=20)
     email = models.EmailField(unique=True, blank=True)
 
+    class Meta:
+        '''Default order and name for model in admin and forms'''
+        ordering=['full_name']
+        verbose_name='Teacher details'
+
     def __str__(self):
         return f'Teacher: {self.full_name}'
 
@@ -93,6 +116,11 @@ class Subject(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100, help_text="Enter name of the subject")
     teacher = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True, related_name="subjects")
+
+    class Meta:
+        '''Default order and name for model in admin and forms'''
+        ordering=['name']
+        verbose_name='Subject details'
 
     def __str__(self):
         return f'Subject: {self.name}'
@@ -124,6 +152,10 @@ class Performance(models.Model):
     term = models.IntegerField(choices=TERMS)
     date_entered = models.DateField(auto_now_add=True)
 
+    class Meta:
+        '''Default order and name for model in admin and forms'''
+        ordering=['academic_year', 'term']
+        verbose_name='Exam details'
 
 # Attendance model/table
 class Attendance(models.Model):
@@ -166,6 +198,10 @@ class Invoice(models.Model):
 
     term = models.IntegerField(choices=TERMS)
 
+    class Meta:
+        '''Default order'''
+        ordering=['academic_year', 'term']
+
 
 # Payment table/model
 class Payment(models.Model):
@@ -176,6 +212,10 @@ class Payment(models.Model):
     payment_method = models.CharField(max_length=50)
     payment_date =models.DateField()
     reference_number = models.CharField(max_length=100)
+
+    class Meta:
+        '''Default order'''
+        ordering=['payment_date']
 
 
 # Enrollment table/model
@@ -194,3 +234,7 @@ class Enrollment(models.Model):
     ]
 
     status = models.CharField(max_length=10, choices=ENROLLMENT_STATUS_CHOICES)
+
+    class Meta:
+        '''Default order'''
+        ordering=['date_enrolled']
