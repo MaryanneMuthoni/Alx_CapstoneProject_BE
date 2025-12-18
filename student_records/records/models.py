@@ -26,7 +26,7 @@ class Student(models.Model):
 
     status = models.CharField(max_length=11, choices=STATUS_CHOICES)
     date_of_admission = models.DateField()
-    class_id = models.ForeignKey(Class, on_delete=models.CASCADE)
+    grade = models.ForeignKey("Grade", on_delete=models.CASCADE)
 
 
 class Parent(models.Model):
@@ -40,7 +40,7 @@ class StudentParent(models.Model):
     student_id = models.ForeignKey(Student, on_delete=models.CASCADE)
     parent = models.ForeignKey(Parent, on_delete=models.CASCADE)
 
-    PRIMARY =[
+    RELATIONSHIP_CHOICES = [
             ('M', 'Mother'),
             ('F', 'Father'),
             ('G', 'Guardian'),
@@ -56,11 +56,11 @@ class StudentParent(models.Model):
     is_primary_guardian = models.CharField(max_length=1, choices=PRIMARY)
 
 
-class Class(models.Model):
+class Grade(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.IntegerField(help_text="Enter name of the class")
     stream = models.CharField(max_length=20,help_text="Enter stream name")
-    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+    teacher = models.ForeignKey("Teacher", on_delete=models.CASCADE)
 
 
 class Teacher(models.Model):
@@ -103,7 +103,7 @@ class Performance(models.Model):
 
 class Attendance(models.Model):
     id = models.AutoField(primary_key=True)
-    class = models.ForeignKey(Class, on_delete=models.CASCADE)
+    grade = models.ForeignKey(Grade, on_delete=models.CASCADE)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
 
     STATUS_CHOICES =[
@@ -118,8 +118,8 @@ class Attendance(models.Model):
 class Invoice(models.Model):
     id = models.AutoField(primary_key=True)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    total_amount = models.DecimalField()
-    amount_due = models.DecimalField()
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    amount_due = models.DecimalField(max_digits=10, decimal_places=2)
     payment_due_date = models.DateField()
 
     PAYMENT_STATUS_CHOICES =[
@@ -141,7 +141,7 @@ class Invoice(models.Model):
 class Payment(models.Model):
     id = models.AutoField(primary_key=True)
     invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE)
-    amount_paid = models.DecimalField()
+    amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
     payment_method = models.CharField(max_length=50)
     payment_date =models.DateField()
     reference_number = models.IntegerField()
@@ -149,7 +149,7 @@ class Payment(models.Model):
 
 class Enrollment(models.Model):
     id = models.AutoField(primary_key=True)
-    class = models.ForeignKey(Class, on_delete=models.CASCADE)
+    grade = models.ForeignKey(Grade, on_delete=models.CASCADE)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     academic_year = models.DateField()
     date_enrolled = models.DateField()
