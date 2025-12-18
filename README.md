@@ -161,3 +161,4 @@ ID, student_id(ForeignKey), class_id(ForeignKey), academic_year, date_enrolled, 
 | Update particular enrollment | PUT | /enrollments/{id}/ |
 | Delete particular enrollment | DELETE |/enrollments/{id}/ |
 
+11. **Grade/Class:**
