@@ -28,7 +28,7 @@ class Student(models.Model):
     date_of_admission = models.DateField()
     student_email = models.EmailField(unique=True, blank=True)
     profile_photo = models.ImageField(upload_to="students/", null=True, blank=True)
-    grade = models.ForeignKey("Grade", on_delete=models.SET_NULL, null=True, related_name="students")
+    grade = models.ForeignKey("Grade", on_delete=models.SET_NULL, null=True, default="N/A", related_name="students")
 
     class Meta:
         '''Default order and name for model in admin and forms'''
