@@ -2,13 +2,13 @@ from django.contrib import admin
 from .models import Grade, Invoice, Parent, Subject, Teacher, Payment, Enrollment, Attendance, StudentParent, Performance, Student
 
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'first_name', 'last_name', 'gender', 'date_of_birth',  'status', 'grade')
+    list_display = ('first_name', 'last_name', 'gender', 'date_of_birth',  'status', 'grade')
 
 class GradeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'stream', 'teacher')
+    list_display = ('name', 'stream', 'teacher')
 
 class TeacherAdmin(admin.ModelAdmin):
-    list_display = ('id', 'full_name', 'phone_number', 'email')
+    list_display = ('full_name', 'phone_number', 'email')
 
 # Register your models here.
 admin.site.register(Student, StudentAdmin)

@@ -28,12 +28,12 @@ class Student(models.Model):
     date_of_admission = models.DateField()
     student_email = models.EmailField(unique=True, blank=True)
     profile_photo = models.ImageField(upload_to="students/", null=True, blank=True)
-    grade = models.ForeignKey("Grade", on_delete=models.SET_NULL, null=True, default="N/A", related_name="students")
+    grade = models.ForeignKey("Grade", on_delete=models.SET_NULL, null=True, blank=True, default="N/A", related_name="students")
 
     class Meta:
         '''Default order and name for model in admin and forms'''
         ordering=['first_name', 'last_name']
-        verbose_name='Student details'
+        verbose_name='Student detail'
 
     def __str__(self):
         return f'Student: {self.first_name} {self.last_name}'
@@ -50,8 +50,8 @@ class Parent(models.Model):
 
     class Meta:
         '''Default order and name for model in admin and forms'''
-        ordering=['full_name']
-        verbose_name='Parent details'
+        ordering=['full_name', 'address', 'phone_number', 'email']
+        verbose_name='Parent detail'
 
     def __str__(self):
         return f'Parent: {self.full_name}'
@@ -74,7 +74,8 @@ class StudentParent(models.Model):
     
     class Meta:
         '''Name for model in admin and forms'''
-        verbose_name='Student-Parent join table'
+        ordering=['student', 'parent', 'relationship_type', 'is_primary_guardian']
+        verbose_name='Student-Parent join'
 
 # Grade/Class table/model
 class Grade(models.Model):
@@ -87,7 +88,7 @@ class Grade(models.Model):
     class Meta:
         '''Default order and name for model in admin and forms'''
         ordering=['name']
-        verbose_name='Class details'
+        verbose_name='Class detail'
 
     def __str__(self):
         return f'Grade: {self.name} {self.stream}'
@@ -104,7 +105,7 @@ class Teacher(models.Model):
     class Meta:
         '''Default order and name for model in admin and forms'''
         ordering=['full_name']
-        verbose_name='Teacher details'
+        verbose_name='Teacher detail'
 
     def __str__(self):
         return f'Teacher: {self.full_name}'
@@ -120,7 +121,7 @@ class Subject(models.Model):
     class Meta:
         '''Default order and name for model in admin and forms'''
         ordering=['name']
-        verbose_name='Subject details'
+        verbose_name='Subject detail'
 
     def __str__(self):
         return f'Subject: {self.name}'
@@ -155,7 +156,7 @@ class Performance(models.Model):
     class Meta:
         '''Default order and name for model in admin and forms'''
         ordering=['academic_year', 'term']
-        verbose_name='Exam details'
+        verbose_name='Exam detail'
 
 # Attendance model/table
 class Attendance(models.Model):
