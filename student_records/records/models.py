@@ -45,7 +45,7 @@ class Parent(models.Model):
     id = models.AutoField(primary_key=True)
     full_name = models.CharField(max_length=100, help_text="Enter parent's full name")
     address = models.CharField(max_length=100)
-    phone_number = models.CharField(max_length=50)
+    phone_number = models.CharField(max_length=13, unique=True)
     email = models.EmailField(null=True, blank=True)
 
     class Meta:
@@ -98,7 +98,7 @@ class Teacher(models.Model):
     '''Class that defines teacher instance attributes'''
     id = models.AutoField(primary_key=True)
     full_name = models.CharField(max_length=100, help_text="Enter teacher's full name")
-    phone_number = models.CharField(max_length=20)
+    phone_number = models.CharField(max_length=13, unique=True)
     email = models.EmailField(unique=True, blank=True)
 
     class Meta:
