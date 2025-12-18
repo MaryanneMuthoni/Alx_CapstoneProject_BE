@@ -3,8 +3,8 @@ from django.db import models
 # Create your models here.
 class Student(models.Model):
     id = models.AutoField(primary_key=True)
-    first_name = models.CharField(max_length=100, help_text='Enter first name')
-    last_name = models.CharField(max_length=100, help_text='Enter last name')
+    first_name = models.CharField(max_length=100, help_text='Enter first name', blank=False)
+    last_name = models.CharField(max_length=100, help_text='Enter last name', blank=False)
     
     GENDER_CHOICES =[
             ('F', 'Female'),
@@ -26,19 +26,32 @@ class Student(models.Model):
 
     status = models.CharField(max_length=11, choices=STATUS_CHOICES)
     date_of_admission = models.DateField()
-    grade = models.ForeignKey("Grade", on_delete=models.CASCADE)
+    student_email = models.EmailField(unique=True, blank=True)
+    profile_photo = models.ImageField(upload_to="students/", null=True, blank=True)
+    grade = models.ForeignKey("Grade", on_delete=models.SET_NULL, null=True, related_name="students")
+
+    def __str__(self):
+        return f'Student: {self.first_name} {self.last_name}'
 
 
+# Parent table/model
 class Parent(models.Model):
+    '''Class that defines parent instance attributes'''
     id = models.AutoField(primary_key=True)
     full_name = models.CharField(max_length=100, help_text="Enter parent's full name")
     address = models.CharField(max_length=100)
-    phone_number = models.IntegerField()
+    phone_number = models.CharField(max_length=50)
+    email = models.EmailField(null=True, blank=True)
+
+    def __str__(self):
+        return f'Parent: {self.full_name}'
 
 
+# Join table for Parent and Student table
 class StudentParent(models.Model):
-    student_id = models.ForeignKey(Student, on_delete=models.CASCADE)
-    parent = models.ForeignKey(Parent, on_delete=models.CASCADE)
+    '''Class that defines studentparent instance attributes'''
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True, related_name="parents")
+    parent = models.ForeignKey(Parent, on_delete=models.CASCADE, related_name="students")
 
     RELATIONSHIP_CHOICES = [
             ('M', 'Mother'),
@@ -47,39 +60,50 @@ class StudentParent(models.Model):
     ]
 
     relationship_type = models.CharField(max_length=1, choices=RELATIONSHIP_CHOICES)
-
-    PRIMARY =[
-            ('Y', 'Yes'),
-            ('N', 'No'),
-    ]
-
-    is_primary_guardian = models.CharField(max_length=1, choices=PRIMARY)
+    is_primary_guardian = models.BooleanField(default=False)
 
 
+# Grade/Class table/model
 class Grade(models.Model):
+    '''Class that defines grade/class instance attributes'''
     id = models.AutoField(primary_key=True)
     name = models.IntegerField(help_text="Enter name of the class")
     stream = models.CharField(max_length=20,help_text="Enter stream name")
-    teacher = models.ForeignKey("Teacher", on_delete=models.CASCADE)
+    teacher = models.ForeignKey("Teacher", on_delete=models.SET_NULL, null=True, related_name="classes")
+
+    def __str__(self):
+        return f'Grade: {self.name} {self.stream}'
 
 
+# Teacher table/model
 class Teacher(models.Model):
+    '''Class that defines teacher instance attributes'''
     id = models.AutoField(primary_key=True)
     full_name = models.CharField(max_length=100, help_text="Enter teacher's full name")
-    phone_number = models.IntegerField()
-    email = models.EmailField()
+    phone_number = models.CharField(max_length=20)
+    email = models.EmailField(unique=True, blank=True)
+
+    def __str__(self):
+        return f'Teacher: {self.full_name}'
 
 
+# Subject table/model
 class Subject(models.Model):
+    '''Class that defines subject instance attributes'''
     id = models.AutoField(primary_key=True)
-    name = models.IntegerField(help_text="Enter name of the subject")
-    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100, help_text="Enter name of the subject")
+    teacher = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True, related_name="subjects")
+
+    def __str__(self):
+        return f'Subject: {self.name}'
 
 
+# Performance table/model
 class Performance(models.Model):
+    '''Class that defines performance instance attributes'''
     id = models.AutoField(primary_key=True)
-    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="performance")
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="performance")
     score = models.IntegerField()
 
     EXAM_CHOICES =[
@@ -89,7 +113,7 @@ class Performance(models.Model):
     ]
 
     exam_type = models.CharField(max_length=5, choices=EXAM_CHOICES)
-    academic_year = models.DateField()
+    academic_year = models.IntegerField()
 
     TERMS =[
             (1, 'One'),
@@ -98,13 +122,15 @@ class Performance(models.Model):
     ]
 
     term = models.IntegerField(choices=TERMS)
-    date_entered = models.DateField()
+    date_entered = models.DateField(auto_now_add=True)
 
 
+# Attendance model/table
 class Attendance(models.Model):
+    '''Class that defines attendance instance attributes'''
     id = models.AutoField(primary_key=True)
-    grade = models.ForeignKey(Grade, on_delete=models.CASCADE)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    grade = models.ForeignKey(Grade, on_delete=models.CASCADE, related_name="attendance")
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="attendance")
 
     STATUS_CHOICES =[
             (1, 'Present'),
@@ -115,20 +141,22 @@ class Attendance(models.Model):
     date = models.DateField()
 
 
+# Invoice table/model
 class Invoice(models.Model):
+    '''Class that defines invoice instance attributes'''
     id = models.AutoField(primary_key=True)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="invoices")
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     amount_due = models.DecimalField(max_digits=10, decimal_places=2)
     payment_due_date = models.DateField()
 
     PAYMENT_STATUS_CHOICES =[
-            (1, 'Paid'),
-            (0, 'Pending'),
+            ('PAID', 'Paid'),
+            ('PENDING', 'Pending'),
     ]
 
-    status = models.IntegerField(choices=PAYMENT_STATUS_CHOICES)
-    academic_year = models.DateField()
+    status = models.CharField(max_length=10, choices=PAYMENT_STATUS_CHOICES)
+    academic_year = models.IntegerField()
 
     TERMS =[
             (1, 'One'),
@@ -138,26 +166,31 @@ class Invoice(models.Model):
 
     term = models.IntegerField(choices=TERMS)
 
+
+# Payment table/model
 class Payment(models.Model):
+    '''Class that defines payment instance attributes'''
     id = models.AutoField(primary_key=True)
-    invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE)
+    invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, related_name="payments")
     amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
     payment_method = models.CharField(max_length=50)
     payment_date =models.DateField()
-    reference_number = models.IntegerField()
+    reference_number = models.CharField(max_length=100)
 
 
+# Enrollment table/model
 class Enrollment(models.Model):
+    '''Class that defines enrollment instance attributes'''
     id = models.AutoField(primary_key=True)
-    grade = models.ForeignKey(Grade, on_delete=models.CASCADE)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    academic_year = models.DateField()
+    grade = models.ForeignKey(Grade, on_delete=models.CASCADE, related_name="enrollments")
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="enrollments")
+    academic_year = models.IntegerField()
     date_enrolled = models.DateField()
-    date_left = models.DateField()
+    date_left = models.DateField(null=True, blank=True)
 
     ENROLLMENT_STATUS_CHOICES =[
-            (1, 'Enrolled'),
-            (0, 'Not enrolled'),
+            ('ENROLLED', 'Enrolled'),
+            ('LEFT', 'Not enrolled'),
     ]
 
-    status = models.IntegerField(choices=ENROLLMENT_STATUS_CHOICES)
+    status = models.CharField(max_length=10, choices=ENROLLMENT_STATUS_CHOICES)
