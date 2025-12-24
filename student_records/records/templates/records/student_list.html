@@ -1,0 +1,16 @@
+<!-- list_books.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>List of Students</title>
+</head>
+<body>
+    <h1>Students:</h1>
+    <ul>
+        {% for student in students %}
+        <li>{{ student.first_name }}  {{ student.last_name }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
