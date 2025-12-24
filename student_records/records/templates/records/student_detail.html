@@ -1,4 +1,4 @@
-<!-- library_detail.html -->
+<!-- student_detail.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,12 +6,19 @@
     <title>Student Detail</title>
 </head>
 <body>
-	<h1>Student: {{ student.first_name }} {{studenttt.last_name}}</h1>
-    <h2>Student:</h2>
-    <ul>
-        {% for student in library.books.all %}
-        <li>{{ book.title }} by {{ book.author.name }} (Published {{ book.publication_year }})</li>
-        {% endfor %}
-    </ul>
+	<h1>Student: {{ student.first_name }} {{ student.last_name }}</h1>
+
+	<h2>Personal Information</h2>
+	<ul>
+        	<li>Gender: {{ student.get_gender_display }}</li>
+        	<li>Date of Birth: {{ student.date_of_birth }}</li>
+		<li>Address: {{ student.address }}</li>
+		<li>Email: {{ student.student_email }}</li>
+		<li>Status: {{ student.get_status_display }}</li>
+		<li>Date of Admission: {{ student.date_of_admission }}</li>
+		{% if student.profile_photo %}
+        	<li><img src="{{ student.profile_photo.url }}" alt="Profile Photo" width="150"></li>
+		{% endif %}
+	</ul>
 </body>
 </html>
