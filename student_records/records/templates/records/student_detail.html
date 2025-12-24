@@ -1,0 +1,17 @@
+<!-- library_detail.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Detail</title>
+</head>
+<body>
+	<h1>Student: {{ student.first_name }} {{studenttt.last_name}}</h1>
+    <h2>Student:</h2>
+    <ul>
+        {% for student in library.books.all %}
+        <li>{{ book.title }} by {{ book.author.name }} (Published {{ book.publication_year }})</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

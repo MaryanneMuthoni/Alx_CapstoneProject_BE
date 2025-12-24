@@ -1,8 +1,8 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Student(models.Model):
-    id = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=100, help_text='Enter first name', blank=False)
     last_name = models.CharField(max_length=100, help_text='Enter last name', blank=False)
     
@@ -29,7 +29,7 @@ class Student(models.Model):
     student_email = models.EmailField(unique=True, blank=True)
     profile_photo = models.ImageField(upload_to="students/", null=True, blank=True)
     grade = models.ForeignKey("Grade", on_delete=models.SET_NULL, null=True, blank=True, default="N/A", related_name="students")
-
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='student_profile', null=True, blank=True)
     class Meta:
         '''Default order and name for model in admin and forms'''
         ordering=['first_name', 'last_name']
@@ -239,3 +239,23 @@ class Enrollment(models.Model):
     class Meta:
         '''Default order'''
         ordering=['date_enrolled']
+
+
+# UserProfile model
+class UserProfile(models.Model):
+    '''
+    Extend the Django User model to include user roles 
+    and develop views that restrict access based on these roles
+    '''
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    ROLE_CHOICES = [
+            ("Admin", "Admin role"),
+            ("Student", "Student role"),
+            ("Teacher", "Teacher role"),
+            ("Parent", "Parent role"),
+            ]
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+
+    def __str__(self):
+        return self.role
