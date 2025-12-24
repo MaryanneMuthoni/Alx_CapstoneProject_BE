@@ -28,28 +28,58 @@ def is_parent(user):
     '''Checks if user has a profile and is a parent, returns True/False'''
     return hasattr(user, 'userprofile') and user.userprofile.role.lower() == 'parent'
 
+def is_pending(user):
+    '''
+    For user who just registered, waiting for approval, returns True/False
+    To ensure the right people access the records
+    '''
+    return hasattr(user, 'userprofile') and user.userprofile.role.lower() == 'pending'
+
 
 # Views for the different roles once logged in
 # ============================================
-@user_passes_test(is_admin, login_url='login')
+@user_passes_test(is_admin, login_url='pending')
 def admin_view(request):
     '''Renders view for user who is admin'''
     return render(request, 'records/admin_view.html')
 
-@user_passes_test(is_student, login_url='login')
+@user_passes_test(is_student, login_url='pending')
 def student_view(request):
     '''Renders view for user who is student'''
     return render(request, 'records/student_view.html')
 
-@user_passes_test(is_teacher, login_url='login')
+@user_passes_test(is_teacher, login_url='pending')
 def teacher_view(request):
     '''Renders view for user who is a teacher'''
     return render(request, 'records/teacher_view.html')
 
-@user_passes_test(is_parent, login_url='login')
+@user_passes_test(is_parent, login_url='pending')
 def parent_view(request):
     '''Renders view for user who is a parent'''
     return render(request, 'records/parent_view.html')
+
+@login_required
+def pending_view(request):
+    '''Renders view for users who registered, waiting approval and role assignment'''
+    return render(request, 'accounts/pending_view.html')
+
+@login_required
+def login_redirect(request):
+    '''Redirects after login, 'LOGIN_REDIRECT_URL...' setting in settings.py'''
+    user = request.user
+
+    if is_pending(user):
+        return redirect('pending')
+    elif is_admin(user):
+        return redirect('admin_view')
+    elif is_teacher(user):
+        return redirect('teacher_view')
+    elif is_student(user):
+        return redirect('student_view')
+    elif is_parent(user):
+        return redirect('parent_view')
+    else:
+        return redirect('login')
 
 
 # Student model views for CRUD operations
@@ -112,7 +142,7 @@ class StudentDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
         # For students
         if is_student(user):
-            return Student.objects.get(user=user)
+            return Student.objects.get(pk=pk, user=user)
         # For parents
         elif is_parent(user):
             return Student.objects.get(pk=pk, parents__parent__user=user)
