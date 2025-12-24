@@ -42,7 +42,6 @@ class Student(models.Model):
 # Parent table/model
 class Parent(models.Model):
     '''Class that defines parent instance attributes'''
-    id = models.AutoField(primary_key=True)
     full_name = models.CharField(max_length=100, help_text="Enter parent's full name")
     address = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=13, unique=True)
@@ -80,7 +79,6 @@ class StudentParent(models.Model):
 # Grade/Class table/model
 class Grade(models.Model):
     '''Class that defines grade/class instance attributes'''
-    id = models.AutoField(primary_key=True)
     name = models.IntegerField(help_text="Enter name of the class")
     stream = models.CharField(max_length=20,help_text="Enter stream name")
     teacher = models.ForeignKey("Teacher", on_delete=models.SET_NULL, null=True, related_name="classes")
@@ -97,7 +95,6 @@ class Grade(models.Model):
 # Teacher table/model
 class Teacher(models.Model):
     '''Class that defines teacher instance attributes'''
-    id = models.AutoField(primary_key=True)
     full_name = models.CharField(max_length=100, help_text="Enter teacher's full name")
     phone_number = models.CharField(max_length=13, unique=True)
     email = models.EmailField(unique=True, blank=True)
@@ -114,7 +111,6 @@ class Teacher(models.Model):
 # Subject table/model
 class Subject(models.Model):
     '''Class that defines subject instance attributes'''
-    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100, help_text="Enter name of the subject")
     teacher = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True, related_name="subjects")
 
@@ -130,7 +126,6 @@ class Subject(models.Model):
 # Performance table/model
 class Performance(models.Model):
     '''Class that defines performance instance attributes'''
-    id = models.AutoField(primary_key=True)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="performance")
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="performance")
     score = models.IntegerField()
@@ -161,7 +156,6 @@ class Performance(models.Model):
 # Attendance model/table
 class Attendance(models.Model):
     '''Class that defines attendance instance attributes'''
-    id = models.AutoField(primary_key=True)
     grade = models.ForeignKey(Grade, on_delete=models.CASCADE, related_name="attendance")
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="attendance")
 
@@ -177,7 +171,6 @@ class Attendance(models.Model):
 # Invoice table/model
 class Invoice(models.Model):
     '''Class that defines invoice instance attributes'''
-    id = models.AutoField(primary_key=True)
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="invoices")
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     amount_due = models.DecimalField(max_digits=10, decimal_places=2)
@@ -207,7 +200,6 @@ class Invoice(models.Model):
 # Payment table/model
 class Payment(models.Model):
     '''Class that defines payment instance attributes'''
-    id = models.AutoField(primary_key=True)
     invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, related_name="payments")
     amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
     payment_method = models.CharField(max_length=50)
@@ -222,7 +214,6 @@ class Payment(models.Model):
 # Enrollment table/model
 class Enrollment(models.Model):
     '''Class that defines enrollment instance attributes'''
-    id = models.AutoField(primary_key=True)
     grade = models.ForeignKey(Grade, on_delete=models.CASCADE, related_name="enrollments")
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="enrollments")
     academic_year = models.IntegerField()
