@@ -123,7 +123,7 @@ class StudentDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     '''
     model = Student
     template_name = 'records/student_detail.html'
-    context_object_name = 'student'
+    context_object_name = 'students'
 
     def test_func(self):
         '''
@@ -166,7 +166,7 @@ class StudentUpdateView(LoginRequiredMixin, UserPassesTestMixin,UpdateView):
     form_class = StudentForm
     template_name = 'records/student_update.html'
     success_url = reverse_lazy('students')
-    context_object_name = 'student'
+    context_object_name = 'students'
 
     def test_func(self):
         '''A test that the current logged-in user must pass to access the view- must be admin'''
@@ -177,6 +177,289 @@ class StudentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Student
     template_name = 'records/student_delete.html'
     success_url = reverse_lazy('students')
+
+    def test_func(self):
+        '''A test that the current logged-in user must pass to access the view- must be admin'''
+        return is_admin(self.request.user)
+
+
+# Parent model views for CRUD operations
+# =======================================
+class ParentListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    '''
+    display all parent records
+    Student and parents only view their own/their parents'/guardians' records
+    '''
+    model = Parent
+    template_name = 'records/parent_list.html'
+    context_object_name = 'parents'
+
+    def test_func(self):
+        '''
+        A test that the current logged-in user must pass 
+        to access the view- must be admin/teacher/student/parent
+        '''
+        user = self.request.user
+        return is_admin(user) or is_teacher(user) or is_student(user) or is_parent(user)
+
+    def get_queryset(self):
+        '''Restrict parents/students to view of their own/their parent's records'''
+        user = self.request.user
+
+        # For students
+        if is_student(user):
+            return Parent.objects.filter(user=user)
+        # For parents
+        elif is_parent(user):
+            return Parent.objects.filter(students__student__user=user)
+        # For teacher and admin
+        else:
+            return Parent.objects.all()
+
+class ParentDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    '''
+    show details of a specific parent
+    Parents/Students view only their/their parents'/guardians' records
+    Teacher and admins can access any parent
+    '''
+    model = Parent
+    template_name = 'records/parent_detail.html'
+    context_object_name = 'parents'
+
+    def test_func(self):
+        '''
+        A test that the current logged-in user must pass 
+        to access the view- must be parent/admin/teacher/student
+        '''
+        user = self.request.user
+        return is_admin(user) or is_teacher(user) or is_student(user) or is_parent(user)
+
+    def get_object(self):
+        '''
+        override get_object method
+        '''
+        user = self.request.user
+        pk = self.kwargs['pk']
+
+        # For students
+        if is_student(user):
+            return Parent.objects.get(pk=pk, user=user)
+        # For parents
+        elif is_parent(user):
+            return Parent.objects.get(pk=pk, students__student__user=user)
+        # For admin and teachers
+        return super().get_object()
+
+class ParentCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    '''allow admins to add new parents/guardians'''
+    model = Parent
+    form_class = ParentForm
+    template_name = 'records/parent_create.html'
+    success_url = reverse_lazy('parents')
+
+    def test_func(self):
+        '''A test that the current logged-in user must pass to access the view- must be admin'''
+        return is_admin(self.request.user)
+
+class ParentUpdateView(LoginRequiredMixin, UserPassesTestMixin,UpdateView):
+    '''enable admin to edit student records'''
+    model = Parent
+    form_class = ParentForm
+    template_name = 'records/parent_update.html'
+    success_url = reverse_lazy('parents')
+    context_object_name = 'parents'
+
+    def test_func(self):
+        '''A test that the current logged-in user must pass to access the view- must be admin'''
+        return is_admin(self.request.user)
+
+class StudentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    '''let admin delete parent records'''
+    model = Parent
+    template_name = 'records/parent_delete.html'
+
+
+# Grade model views for CRUD operations
+# =======================================
+class GradeListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    '''
+    display all grade records
+    Student and parents only view their own/their parents'/guardians' record
+    '''
+    model = Grade
+    template_name = 'records/grade_list.html'
+    context_object_name = 'grades'
+
+    def test_func(self):
+        '''
+        A test that the current logged-in user must pass 
+        to access the view- must be admin/teacher/student/parent
+        '''
+        user = self.request.user
+        return is_admin(user) or is_teacher(user) or is_student(user) or is_parent(user)
+
+    def get_queryset(self):
+        '''Restrict parents/students to view of their own/their parent's records'''
+        user = self.request.user
+
+        # For students
+        if is_student(user):
+            return Grade.objects.filter(user=user)
+        # For parents
+        elif is_parent(user):
+            return Grade.objects.filter(students__student__user=user)
+        # For teacher and admin
+        else:
+            return Grade.objects.all()
+
+class GradeDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    '''
+    show details of a specific grade
+    Students/Parents view only their own children's records
+    Teacher and admins can access any grade
+    '''
+    model = Grade
+    template_name = 'records/grade_detail.html'
+    context_object_name = 'grade'
+
+    def test_func(self):
+        '''
+        A test that the current logged-in user must pass 
+        to access the view- must be parent/admin/teacher/student
+        '''
+        user = self.request.user
+        return is_admin(user) or is_teacher(user) or is_student(user) or is_parent(user)
+
+    def get_object(self):
+        '''
+        override get_object method
+        '''
+        user = self.request.user
+        pk = self.kwargs['pk']
+
+        # For students
+        if is_student(user):
+            return Grade.objects.get(pk=pk, user=user)
+        # For parents
+        elif is_parent(user):
+            return Grade.objects.get(pk=pk, students__student__user=user)
+        # For admin and teachers
+        return super().get_object()
+
+class GradeCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    '''allow admins to add new grade records'''
+    model = Grade
+    form_class = GradeForm
+    template_name = 'records/grade_create.html'
+    success_url = reverse_lazy('grade')
+
+    def test_func(self):
+        '''A test that the current logged-in user must pass to access the view- must be admin'''
+        return is_admin(self.request.user)
+
+class GradeUpdateView(LoginRequiredMixin, UserPassesTestMixin,UpdateView):
+    '''enable admin to edit grade records'''
+    model = Grade
+    form_class = GradeForm
+    template_name = 'records/grade_update.html'
+    success_url = reverse_lazy('grade')
+    context_object_name = 'grades'
+
+    def test_func(self):
+        '''A test that the current logged-in user must pass to access the view- must be admin'''
+        return is_admin(self.request.user)
+
+class GradeDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    '''let admin delete grade records'''
+    model = Grade
+    template_name = 'records/grade_delete.html'
+    success_url = reverse_lazy('grade')
+
+    def test_func(self):
+        '''A test that the current logged-in user must pass to access the view- must be admin'''
+        return is_admin(self.request.user)
+
+
+# Teacher model views for CRUD operations
+# =======================================
+class TeacherListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    '''
+    display all teacher records for all roles(Admin/Teacher/Student/Parent)
+    '''
+    model = Teacher
+    template_name = 'records/teacher_list.html'
+    context_object_name = 'teachers'
+
+    def test_func(self):
+        '''
+        A test that the current logged-in user must pass 
+        to access the view- must be admin/teacher/student/parent
+        '''
+        user = self.request.user
+        return is_admin(user) or is_teacher(user) or is_student(user) or is_parent(user)
+
+class GradeDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    '''
+    show details of a specific grade
+    Students/Parents view only their own children's records
+    Teacher and admins can access any grade
+    '''
+    model = Grade
+    template_name = 'records/grade_detail.html'
+    context_object_name = 'grade'
+
+    def test_func(self):
+        '''
+        A test that the current logged-in user must pass 
+        to access the view- must be parent/admin/teacher/student
+        '''
+        user = self.request.user
+        return is_admin(user) or is_teacher(user) or is_student(user) or is_parent(user)
+
+    def get_object(self):
+        '''
+        override get_object method
+        '''
+        user = self.request.user
+        pk = self.kwargs['pk']
+
+        # For students
+        if is_student(user):
+            return Grade.objects.get(pk=pk, user=user)
+        # For parents
+        elif is_parent(user):
+            return Grade.objects.get(pk=pk, students__student__user=user)
+        # For admin and teachers
+        return super().get_object()
+
+class GradeCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    '''allow admins to add new grade records'''
+    model = Grade
+    form_class = GradeForm
+    template_name = 'records/grade_create.html'
+    success_url = reverse_lazy('grade')
+
+    def test_func(self):
+        '''A test that the current logged-in user must pass to access the view- must be admin'''
+        return is_admin(self.request.user)
+
+class GradeUpdateView(LoginRequiredMixin, UserPassesTestMixin,UpdateView):
+    '''enable admin to edit grade records'''
+    model = Grade
+    form_class = GradeForm
+    template_name = 'records/grade_update.html'
+    success_url = reverse_lazy('grade')
+    context_object_name = 'parents'
+
+    def test_func(self):
+        '''A test that the current logged-in user must pass to access the view- must be admin'''
+        return is_admin(self.request.user)
+
+class GradeDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    '''let admin delete grade records'''
+    model = Grade
+    template_name = 'records/grade_delete.html'
+    success_url = reverse_lazy('grade')
 
     def test_func(self):
         '''A test that the current logged-in user must pass to access the view- must be admin'''
