@@ -273,7 +273,7 @@ class ParentUpdateView(LoginRequiredMixin, UserPassesTestMixin,UpdateView):
         '''A test that the current logged-in user must pass to access the view- must be admin'''
         return is_admin(self.request.user)
 
-class StudentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+class ParentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     '''let admin delete parent records'''
     model = Parent
     template_name = 'records/parent_delete.html'
