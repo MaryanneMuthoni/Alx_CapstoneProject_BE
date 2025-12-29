@@ -664,7 +664,7 @@ class AttendanceDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     Admin/Teacher can view all attendances
     Students/Parents can see their own/their children's attendance
     '''
-    model = Attenance
+    model = Attendance
     template_name = 'records/attendance_detail.html'
     context_object_name = 'attendance'
 
