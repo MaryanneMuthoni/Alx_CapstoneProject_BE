@@ -1,19 +1,19 @@
 {% load static %}
-<!-- student_create.html -->
+<!-- subject_create.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Create Student</title>
+    <title>Create Subject</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-    <h1>Create student</h1>
+    <h1>Create subject</h1>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Add student</button>
-	<a href="{% url 'students' %}">Cancel</a>
+        <button type="submit">Add subject</button>
+	<a href="{% url 'subjects' %}">Cancel</a>
     </form>
 </body>
 </html>

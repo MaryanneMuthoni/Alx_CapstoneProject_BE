@@ -1,0 +1,16 @@
+<!-- student_list.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Performance</title>
+</head>
+<body>
+    <h1>Performance:</h1>
+    <ul>
+        {% for performance in performances %}
+	<li>{{ attendance.subject }}  {{ attendance.student }} {{ attendance.score }} {{ attendance.exam_type }} {{ attendance.academic_year }} {{attendance.term }} {{ attendance.date_entered }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

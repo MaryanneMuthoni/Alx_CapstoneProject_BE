@@ -1,0 +1,16 @@
+<!-- payment_list.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>List of payments</title>
+</head>
+<body>
+    <h1>Payments:</h1>
+    <ul>
+        {% for payment in payments %}
+	<li>{{ payment.invoice }}  {{ payment.amount_paid }} {{ payment.payment_method }} {{ payment.payment_date }} {{ payment.reference_number }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

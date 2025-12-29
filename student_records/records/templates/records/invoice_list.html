@@ -1,0 +1,16 @@
+<!-- invoice_list.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>List of Invoices</title>
+</head>
+<body>
+    <h1>Invoices:</h1>
+    <ul>
+        {% for invoice in invoices %}
+	<li>{{ invoice.student }}  {{ invoice.total_amount }} {{ invoice.amount_due }} {{ invoice.payment_due_date }} {{ invoice.status }} {{ invoice.academic_year }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

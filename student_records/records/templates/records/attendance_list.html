@@ -1,0 +1,16 @@
+<!-- attendance_list.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Attendance</title>
+</head>
+<body>
+    <h1>Attendances:</h1>
+    <ul>
+        {% for attendance in attendances %}
+	<li>{{ attendance.grade }}  {{ attendance.student }} {{ attendance.status }} {{ attendance.date }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

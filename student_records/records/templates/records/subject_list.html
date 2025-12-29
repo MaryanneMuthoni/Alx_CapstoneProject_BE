@@ -1,0 +1,16 @@
+<!-- subject_list.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>List of Subjects</title>
+</head>
+<body>
+    <h1>Subjects:</h1>
+    <ul>
+        {% for subject in subjects %}
+        <li>{{ subject.name }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
