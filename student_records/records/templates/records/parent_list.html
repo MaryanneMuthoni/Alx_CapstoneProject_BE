@@ -1,0 +1,16 @@
+<!-- parent_list.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>List of Parents</title>
+</head>
+<body>
+    <h1>Parents:</h1>
+    <ul>
+        {% for parent in parents %}
+	<li>{{ parent.full_name }}  {{ parent.address }} {{ parent.phone_number }} {{ parent.email }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

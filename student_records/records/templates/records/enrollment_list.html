@@ -1,0 +1,16 @@
+<!-- enrollment_list.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Enrollment</title>
+</head>
+<body>
+    <h1>Enrollments:</h1>
+    <ul>
+        {% for enrollment in enrollments %}
+	<li>{{ enrollment.grade }} {{ enrollment.student }}  {{ enrollment.academic_year }} {{ enrollment.date_enrolled }} {{ enrollment.date_left }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

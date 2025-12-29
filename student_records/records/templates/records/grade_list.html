@@ -1,0 +1,16 @@
+<!-- grade_list.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>List of grades</title>
+</head>
+<body>
+    <h1>Grades:</h1>
+    <ul>
+        {% for grade in grades %}
+        <li>{{ grade.name }}  {{ grade.stream }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
