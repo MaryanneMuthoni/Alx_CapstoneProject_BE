@@ -3,8 +3,8 @@ from django.views.generic import CreateView, UpdateView, ListView, DetailView, D
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
-from .models import Student, Parent, Grade, Teacher, Performance, Attendance, Invoice, Payment, Enrollment
-from .forms import StudentForm, ParentForm, GradeForm, TeacherForm, PerformanceForm, AttndanceForm, InvoiceForm, PaymentForm, EnrollmentFrom
+from .models import Student, Parent, Grade, Teacher, Performance, Attendance, Invoice, Payment, Enrollment, Subject
+from .forms import StudentForm, ParentForm, GradeForm, TeacherForm, PerformanceForm, AttendanceForm, InvoiceForm, PaymentForm, EnrollmentForm, SubjectForm
 from django.contrib.auth.decorators import user_passes_test
 
 
