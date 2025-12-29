@@ -60,7 +60,7 @@ urlpatterns = [
     path('invoice/<int:pk>/delete/', InvoiceDeleteView.as_view(), name='invoice_delete'),
     # payment model CRUD views url mapping
     path('payments/', PaymentListView.as_view(), name='payment_list'),
-    path('payment/<int:pk>/', paymentDetailView.as_view(), name='payment_detail'),
+    path('payment/<int:pk>/', PaymentDetailView.as_view(), name='payment_detail'),
     path('payment/new/', PaymentCreateView.as_view(), name='payment_create'),
     path('payment/<int:pk>/update/', PaymentUpdateView.as_view(), name='payment_update'),
     path('payment/<int:pk>/delete/', PaymentDeleteView.as_view(), name='payment_delete'),
