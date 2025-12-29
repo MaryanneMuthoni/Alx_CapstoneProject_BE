@@ -30,6 +30,7 @@ class Student(models.Model):
     profile_photo = models.ImageField(upload_to="students/", null=True, blank=True)
     grade = models.ForeignKey("Grade", on_delete=models.SET_NULL, null=True, blank=True, default="N/A", related_name="students")
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='student_profile', null=True, blank=True)
+
     class Meta:
         '''Default order and name for model in admin and forms'''
         ordering=['first_name', 'last_name']
@@ -46,6 +47,8 @@ class Parent(models.Model):
     address = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=13, unique=True)
     email = models.EmailField(null=True, blank=True)
+    students = models.ManyToManyField(Student, through='StudentParent', related_name='parentstudentlink')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='parent_profile', null=True, blank=True)
 
     class Meta:
         '''Default order and name for model in admin and forms'''
@@ -98,6 +101,7 @@ class Teacher(models.Model):
     full_name = models.CharField(max_length=100, help_text="Enter teacher's full name")
     phone_number = models.CharField(max_length=13, unique=True)
     email = models.EmailField(unique=True, blank=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='teacher_profile', null=True, blank=True)
 
     class Meta:
         '''Default order and name for model in admin and forms'''
