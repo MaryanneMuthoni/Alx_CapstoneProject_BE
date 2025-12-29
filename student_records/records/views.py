@@ -3,8 +3,8 @@ from django.views.generic import CreateView, UpdateView, ListView, DetailView, D
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
-from .models import Student
-from .forms import StudentForm
+from .models import Student, Parent, Grade, Teacher, Performance, Attendance, Invoice, Payment, Enrollment
+from .forms import StudentForm, ParentForm, GradeForm, TeacherForm, PerformanceForm, AttndanceForm, InvoiceForm, PaymentForm, EnrollmentFrom
 from django.contrib.auth.decorators import user_passes_test
 
 
@@ -123,7 +123,7 @@ class StudentDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     '''
     model = Student
     template_name = 'records/student_detail.html'
-    context_object_name = 'students'
+    context_object_name = 'student'
 
     def test_func(self):
         '''
@@ -166,7 +166,7 @@ class StudentUpdateView(LoginRequiredMixin, UserPassesTestMixin,UpdateView):
     form_class = StudentForm
     template_name = 'records/student_update.html'
     success_url = reverse_lazy('students')
-    context_object_name = 'students'
+    context_object_name = 'student'
 
     def test_func(self):
         '''A test that the current logged-in user must pass to access the view- must be admin'''
@@ -211,7 +211,7 @@ class ParentListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
             return Parent.objects.filter(user=user)
         # For parents
         elif is_parent(user):
-            return Parent.objects.filter(students__student__user=user)
+            return Parent.objects.filter(students__student=user.student_profile)
         # For teacher and admin
         else:
             return Parent.objects.all()
@@ -224,7 +224,7 @@ class ParentDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     '''
     model = Parent
     template_name = 'records/parent_detail.html'
-    context_object_name = 'parents'
+    context_object_name = 'parent'
 
     def test_func(self):
         '''
@@ -246,7 +246,7 @@ class ParentDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
             return Parent.objects.get(pk=pk, user=user)
         # For parents
         elif is_parent(user):
-            return Parent.objects.get(pk=pk, students__student__user=user)
+            return Parent.objects.get(pk=pk, students__student=user.student_profile)
         # For admin and teachers
         return super().get_object()
 
@@ -267,7 +267,7 @@ class ParentUpdateView(LoginRequiredMixin, UserPassesTestMixin,UpdateView):
     form_class = ParentForm
     template_name = 'records/parent_update.html'
     success_url = reverse_lazy('parents')
-    context_object_name = 'parents'
+    context_object_name = 'parent'
 
     def test_func(self):
         '''A test that the current logged-in user must pass to access the view- must be admin'''
@@ -277,7 +277,11 @@ class ParentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     '''let admin delete parent records'''
     model = Parent
     template_name = 'records/parent_delete.html'
+    success_url = reverse_lazy('parents')
 
+    def test_func(self):
+        '''A test that the current logged-in user must pass to access the view- must be admin'''
+        return is_admin(self.request.user)
 
 # Grade model views for CRUD operations
 # =======================================
@@ -304,10 +308,10 @@ class GradeListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
         # For students
         if is_student(user):
-            return Grade.objects.filter(user=user)
+            return Grade.objects.filter(students=user.student_profile)
         # For parents
         elif is_parent(user):
-            return Grade.objects.filter(students__student__user=user)
+            return Grade.objects.filter(students__in=user.parent_profile.students.all())
         # For teacher and admin
         else:
             return Grade.objects.all()
@@ -320,7 +324,7 @@ class GradeDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     '''
     model = Grade
     template_name = 'records/grade_detail.html'
-    context_object_name = 'grades'
+    context_object_name = 'grade'
 
     def test_func(self):
         '''
@@ -339,10 +343,10 @@ class GradeDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
         # For students
         if is_student(user):
-            return Grade.objects.get(pk=pk, user=user)
+            return Grade.objects.get(pk=pk, students=user.student_profile)
         # For parents
         elif is_parent(user):
-            return Grade.objects.get(pk=pk, students__student__user=user)
+            return Grade.objects.get(pk=pk, students__in=user.parent_profile.students.all())
         # For admin and teachers
         return super().get_object()
 
@@ -363,7 +367,7 @@ class GradeUpdateView(LoginRequiredMixin, UserPassesTestMixin,UpdateView):
     form_class = GradeForm
     template_name = 'records/grade_update.html'
     success_url = reverse_lazy('grades')
-    context_object_name = 'grades'
+    context_object_name = 'grade'
 
     def test_func(self):
         '''A test that the current logged-in user must pass to access the view- must be admin'''
@@ -404,7 +408,7 @@ class TeacherDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     '''
     model = Teacher
     template_name = 'records/teacher_detail.html'
-    context_object_name = 'teachers'
+    context_object_name = 'teacher'
 
     def test_func(self):
         '''
@@ -413,22 +417,6 @@ class TeacherDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         '''
         user = self.request.user
         return is_admin(user) or is_teacher(user) or is_student(user) or is_parent(user)
-
-    def get_object(self):
-        '''
-        override get_object method
-        '''
-        user = self.request.user
-        pk = self.kwargs['pk']
-
-        # For students
-        if is_student(user):
-            return Teacher.objects.get(pk=pk, user=user)
-        # For parents
-        elif is_parent(user):
-            return Teacher.objects.get(pk=pk, students__student__user=user)
-        # For admin and teachers
-        return super().get_object()
 
 class TeacherCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     '''allow admins to add new teacher records'''
@@ -447,7 +435,7 @@ class TeacherUpdateView(LoginRequiredMixin, UserPassesTestMixin,UpdateView):
     form_class = TeacherForm
     template_name = 'records/teacher_update.html'
     success_url = reverse_lazy('teachers')
-    context_object_name = 'teachers'
+    context_object_name = 'teacher'
 
     def test_func(self):
         '''A test that the current logged-in user must pass to access the view- must be admin'''
@@ -488,7 +476,7 @@ class SubjectDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     '''
     model = Subject
     template_name = 'records/subject_detail.html'
-    context_object_name = 'subjects'
+    context_object_name = 'subject'
 
     def test_func(self):
         '''
@@ -497,22 +485,6 @@ class SubjectDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         '''
         user = self.request.user
         return is_admin(user) or is_teacher(user) or is_student(user) or is_parent(user)
-
-    def get_object(self):
-        '''
-        override get_object method
-        '''
-        user = self.request.user
-        pk = self.kwargs['pk']
-
-        # For students
-        if is_student(user):
-            return Subject.objects.get(pk=pk, user=user)
-        # For parents
-        elif is_parent(user):
-            return Subject.objects.get(pk=pk, students__student__user=user)
-        # For admin and teachers
-        return super().get_object()
 
 class SubjectCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     '''allow admins to add new teacher records'''
@@ -531,7 +503,7 @@ class SubjectUpdateView(LoginRequiredMixin, UserPassesTestMixin,UpdateView):
     form_class = SubjectForm
     template_name = 'records/subject_update.html'
     success_url = reverse_lazy('subjects')
-    context_object_name = 'subjects'
+    context_object_name = 'subject'
 
     def test_func(self):
         '''A test that the current logged-in user must pass to access the view- must be admin'''
@@ -575,10 +547,10 @@ class PerformanceListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
         # For students
         if is_student(user):
-            return Performance.objects.filter(user=user)
+            return Performance.objects.filter(student__user=user)
         # For parents
         elif is_parent(user):
-            return Performance.objects.filter(students__student__user=user)
+            return Performance.objects.filter(student__parents__parent__user=user)
         # For teacher and admin
         else:
             return Performance.objects.all()
@@ -591,7 +563,7 @@ class PerformanceDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView)
     '''
     model = Performance
     template_name = 'records/performance_detail.html'
-    context_object_name = 'performances'
+    context_object_name = 'performance'
 
     def test_func(self):
         '''
@@ -610,10 +582,10 @@ class PerformanceDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView)
 
         # For students
         if is_student(user):
-            return Performance.objects.get(pk=pk, user=user)
+            return Performance.objects.get(pk=pk, student__user=user)
         # For parents
         elif is_parent(user):
-            return Performance.objects.get(pk=pk, students__student__user=user)
+            return Performance.objects.get(pk=pk, student__parents__parent__user=user)
         # For admin and teachers
         return super().get_object()
 
@@ -634,7 +606,7 @@ class PerformanceUpdateView(LoginRequiredMixin, UserPassesTestMixin,UpdateView):
     form_class = PerformanceForm
     template_name = 'records/performance_update.html'
     success_url = reverse_lazy('performances')
-    context_object_name = 'performances'
+    context_object_name = 'performance'
 
     def test_func(self):
         '''A test that the current logged-in user must pass to access the view- must be admin'''
@@ -678,10 +650,10 @@ class AttendanceListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
         # For students
         if is_student(user):
-            return Attendance.objects.filter(user=user)
+            return Attendance.objects.filter(student__user=user)
         # For parents
         elif is_parent(user):
-            return Attendance.objects.filter(students__student__user=user)
+            return Attendance.objects.filter(student__parents__parent__user=user)
         # For teacher and admin
         else:
             return Attendance.objects.all()
@@ -694,7 +666,7 @@ class AttendanceDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     '''
     model = Attenance
     template_name = 'records/attendance_detail.html'
-    context_object_name = 'attendances'
+    context_object_name = 'attendance'
 
     def test_func(self):
         '''
@@ -713,10 +685,10 @@ class AttendanceDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
         # For students
         if is_student(user):
-            return Attendance.objects.get(pk=pk, user=user)
+            return Attendance.objects.get(pk=pk, student__user=user)
         # For parents
         elif is_parent(user):
-            return Attendance.objects.get(pk=pk, students__student__user=user)
+            return Attendance.objects.get(pk=pk, student__parents__parent__user=user)
         # For admin and teachers
         return super().get_object()
 
@@ -737,7 +709,7 @@ class AttendanceUpdateView(LoginRequiredMixin, UserPassesTestMixin,UpdateView):
     form_class = AttendanceForm
     template_name = 'records/attendance_update.html'
     success_url = reverse_lazy('attendances')
-    context_object_name = 'attendances'
+    context_object_name = 'attendance'
 
     def test_func(self):
         '''A test that the current logged-in user must pass to access the view- must be admin'''
@@ -782,10 +754,10 @@ class InvoiceListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
         # For students
         if is_student(user):
-            return Invoice.objects.filter(user=user)
+            return Invoice.objects.filter(student__user=user)
         # For parents
         elif is_parent(user):
-            return Invoice.objects.filter(students__student__user=user)
+            return Invoice.objects.filter(student__parents__parent__user=user)
         # For admin
         else:
             return Invoice.objects.all()
@@ -818,10 +790,10 @@ class InvoiceDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
         # For students
         if is_student(user):
-            return Invoice.objects.get(pk=pk, user=user)
+            return Invoice.objects.get(pk=pk, student__user=user)
         # For parents
         elif is_parent(user):
-            return Invoice.objects.get(pk=pk, students__student__user=user)
+            return Invoice.objects.get(pk=pk, student__parents__parent__user=user)
         # For teachers
         return super().get_object()
 
@@ -842,7 +814,7 @@ class InvoiceUpdateView(LoginRequiredMixin, UserPassesTestMixin,UpdateView):
     form_class = InvoiceForm
     template_name = 'records/invoice_update.html'
     success_url = reverse_lazy('invoices')
-    context_object_name = 'invoices'
+    context_object_name = 'invoice'
 
     def test_func(self):
         '''A test that the current logged-in user must pass to access the view- must be admin'''
@@ -887,13 +859,13 @@ class PaymentListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
         # For students
         if is_student(user):
-            return Performance.objects.filter(user=user)
+            return Payment.objects.filter(invoice__student__user=user)
         # For parents
         elif is_parent(user):
-            return Performance.objects.filter(students__student__user=user)
+            return Payment.objects.filter(invoice__student__parents__parent__user=user)
         # For admin
         else:
-            return Performance.objects.all()
+            return Payment.objects.all()
 
 class PaymentDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     '''
@@ -904,7 +876,7 @@ class PaymentDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     '''
     model = Payment
     template_name = 'records/payment_detail.html'
-    context_object_name = 'payments'
+    context_object_name = 'payment'
 
     def test_func(self):
         '''
@@ -923,10 +895,10 @@ class PaymentDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
         # For students
         if is_student(user):
-            return Payment.objects.get(pk=pk, user=user)
+            return Payment.objects.get(pk=pk, invoice__student__user=user)
         # For parents
         elif is_parent(user):
-            return Payment.objects.get(pk=pk, students__student__user=user)
+            return Payment.objects.get(pk=pk, invoice__student__parents__parent__user=user)
         # For admin
         return super().get_object()
 
@@ -947,7 +919,7 @@ class PaymentUpdateView(LoginRequiredMixin, UserPassesTestMixin,UpdateView):
     form_class = PaymentForm
     template_name = 'records/payments_update.html'
     success_url = reverse_lazy('payments')
-    context_object_name = 'payments'
+    context_object_name = 'payment'
 
     def test_func(self):
         '''A test that the current logged-in user must pass to access the view- must be admin'''
@@ -991,10 +963,10 @@ class EnrollmentListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
         # For students
         if is_student(user):
-            return Enrollment.objects.filter(user=user)
+            return Enrollment.objects.filter(student__user=user)
         # For parents
         elif is_parent(user):
-            return Enrollment.objects.filter(students__student__user=user)
+            return Enrollment.objects.filter(student__parents__parent__user=user)
         # For teacher and admin
         else:
             return Enrollment.objects.all()
@@ -1007,7 +979,7 @@ class EnrollmentDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     '''
     model = Enrollment
     template_name = 'records/enrollment_detail.html'
-    context_object_name = 'enrollments'
+    context_object_name = 'enrollment'
 
     def test_func(self):
         '''
@@ -1026,10 +998,10 @@ class EnrollmentDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
         # For students
         if is_student(user):
-            return Enrollment.objects.get(pk=pk, user=user)
+            return Enrollment.objects.get(pk=pk, student__user=user)
         # For parents
         elif is_parent(user):
-            return Enrollment.objects.get(pk=pk, students__student__user=user)
+            return Enrollment.objects.get(pk=pk, student__parents__parent__user=user)
         # For admin and teachers
         return super().get_object()
 
@@ -1050,7 +1022,7 @@ class EnrollmenrUpdateView(LoginRequiredMixin, UserPassesTestMixin,UpdateView):
     form_class = EnrollmentForm
     template_name = 'records/enrollment_update.html'
     success_url = reverse_lazy('enrollments')
-    context_object_name = 'enrollments'
+    context_object_name = 'enrollment'
 
     def test_func(self):
         '''A test that the current logged-in user must pass to access the view- must be admin'''
