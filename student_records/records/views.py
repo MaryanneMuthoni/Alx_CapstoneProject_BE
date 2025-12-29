@@ -1016,7 +1016,7 @@ class EnrollmentCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         '''A test that the current logged-in user must pass to access the view- must be admin'''
         return is_admin(self.request.user)
 
-class EnrollmenrUpdateView(LoginRequiredMixin, UserPassesTestMixin,UpdateView):
+class EnrollmentUpdateView(LoginRequiredMixin, UserPassesTestMixin,UpdateView):
     '''enable admin to edit performance records'''
     model = Enrollment
     form_class = EnrollmentForm
