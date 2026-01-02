@@ -8,7 +8,7 @@ class GradeAdmin(admin.ModelAdmin):
     list_display = ('name', 'stream', 'teacher')
 
 class TeacherAdmin(admin.ModelAdmin):
-    list_display = ('full_name', 'phone_number', 'email')
+    list_display = ('full_name',)
 
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'role')
