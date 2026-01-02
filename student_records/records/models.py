@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 
 # Create your models here.
 class Student(models.Model):
@@ -27,9 +27,8 @@ class Student(models.Model):
     status = models.CharField(max_length=11, choices=STATUS_CHOICES)
     date_of_admission = models.DateField()
     student_email = models.EmailField(unique=True, blank=True)
-    profile_photo = models.ImageField(upload_to="students/", null=True, blank=True)
     grade = models.ForeignKey("Grade", on_delete=models.SET_NULL, null=True, blank=True, default="N/A", related_name="students")
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='student_profile', null=True, blank=True)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='student_profile', null=True, blank=True)
 
     class Meta:
         '''Default order and name for model in admin and forms'''
@@ -45,14 +44,12 @@ class Parent(models.Model):
     '''Class that defines parent instance attributes'''
     full_name = models.CharField(max_length=100, help_text="Enter parent's full name")
     address = models.CharField(max_length=100)
-    phone_number = models.CharField(max_length=13, unique=True)
-    email = models.EmailField(null=True, blank=True)
     students = models.ManyToManyField(Student, through='StudentParent', related_name='parentstudentlink')
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='parent_profile', null=True, blank=True)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='parent_profile', null=True, blank=True)
 
     class Meta:
         '''Default order and name for model in admin and forms'''
-        ordering=['full_name', 'address', 'phone_number', 'email']
+        ordering=['full_name', 'address']
         verbose_name='Parent detail'
 
     def __str__(self):
@@ -63,7 +60,7 @@ class Parent(models.Model):
 class StudentParent(models.Model):
     '''Class that defines studentparent instance attributes'''
     student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True, related_name="parents")
-    parent = models.ForeignKey(Parent, on_delete=models.CASCADE, related_name="students")
+    parent = models.ForeignKey(Parent, on_delete=models.CASCADE, related_name="parent_students")
 
     RELATIONSHIP_CHOICES = [
             ('M', 'Mother'),
@@ -99,9 +96,7 @@ class Grade(models.Model):
 class Teacher(models.Model):
     '''Class that defines teacher instance attributes'''
     full_name = models.CharField(max_length=100, help_text="Enter teacher's full name")
-    phone_number = models.CharField(max_length=13, unique=True)
-    email = models.EmailField(unique=True, blank=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='teacher_profile', null=True, blank=True)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='teacher_profile', null=True, blank=True)
 
     class Meta:
         '''Default order and name for model in admin and forms'''
@@ -242,7 +237,7 @@ class UserProfile(models.Model):
     Extend the Django User model to include user roles 
     and develop views that restrict access based on these roles
     '''
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     ROLE_CHOICES = [
             ("Admin", "Admin role"),

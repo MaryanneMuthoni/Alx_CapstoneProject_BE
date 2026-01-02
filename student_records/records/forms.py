@@ -6,13 +6,13 @@ class StudentForm(forms.ModelForm):
     class Meta:
         model = Student
         fields = ('first_name', 'last_name', 'gender', 'date_of_birth', 'address', 
-                'status', 'date_of_admission', 'student_email', 'profile_photo', 'grade',)
+                'status', 'date_of_admission', 'grade',)
 
 class ParentForm(forms.ModelForm):
     '''Form to handle the creation and updating of parent records'''
     class Meta:
         model = Parent
-        fields = ('full_name', 'address', 'phone_number', 'email')
+        fields = ('full_name', 'address')
 
 class GradeForm(forms.ModelForm):
     '''Form to handle the creation and updating of grade records'''
@@ -24,7 +24,7 @@ class TeacherForm(forms.ModelForm):
     '''Form to handle the creation and updating of teacher records'''
     class Meta:
         model = Teacher
-        fields = ('full_name', 'phone_number', 'email')
+        fields = ('full_name',)
 
 class SubjectForm(forms.ModelForm):
     '''Form to handle the creation and updating of subject records'''
