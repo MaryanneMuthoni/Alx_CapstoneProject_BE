@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'records.apps.RecordsConfig',
     'accounts',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -127,3 +128,8 @@ LOGIN_REDIRECT_URL = '/records/login_redirect'
 LOGOUT_REDIRECT_URL = '/accounts/profile'
 
 AUTH_USER_MODEL = "accounts.CustomUser"
+
+AUTHENTICATION_BACKENDS = [
+    'accounts.backends.PhoneEmailBackend',  # Custom backend for phone_number and email
+    'django.contrib.auth.backends.ModelBackend',  # Keep the default backend as a fallback
+]

@@ -1,6 +1,7 @@
 from django import forms
 from .models import Student, Parent, Grade, Teacher, Subject, Performance, Attendance, Enrollment, Payment, Invoice
 
+
 class StudentForm(forms.ModelForm):
     '''Form to handle the creation and updating of student records'''
     class Meta:
