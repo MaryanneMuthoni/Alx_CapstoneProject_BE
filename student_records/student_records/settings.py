@@ -134,3 +134,13 @@ AUTHENTICATION_BACKENDS = [
     'accounts.backends.PhoneEmailBackend',  # Custom backend for phone_number and email
     'django.contrib.auth.backends.ModelBackend',  # Keep the default backend as a fallback
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+}
