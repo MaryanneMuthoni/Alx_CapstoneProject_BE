@@ -1,5 +1,11 @@
 from rest_framework import serializers
-from .models import Student, Teacher, Parent, Grade, Subject, Performance, Attendance, Invoice, Payment, Enrollment
+from accounts.models import CustomUser
+from records.models import Student, Teacher, Parent, Grade, Subject, Performance, Attendance, Invoice, Payment, Enrollment
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model =CustomUser
+        fields = ("id", "email", "phone_number", "profile_picture")
 
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:

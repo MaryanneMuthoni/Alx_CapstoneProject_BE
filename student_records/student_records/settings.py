@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'records.apps.RecordsConfig',
     'accounts',
     'rest_framework',
+    'api.apps.ApiConfig',
 ]
 
 MIDDLEWARE = [
