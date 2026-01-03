@@ -52,7 +52,7 @@ class PaymentViewSet(viewsets.ModelViewSet):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
 
-# Performance ViewSet view
-class PerformanceViewSet(viewsets.ModelViewSet):
-    queryset = Performance.objects.all()
-    serializer_class = PerformanceSerializer
+# Enrollment ViewSet view
+class EnrollmentViewSet(viewsets.ModelViewSet):
+    queryset = Enrollment.objects.all()
+    serializer_class = EnrollmentSerializer
