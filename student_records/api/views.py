@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework import viewsets
-from .models import from .models import Student, Parent, Grade, Teacher, Performance, Attendance, Invoice, Payment, Enrollment, Subject
+from .models import Student, Parent, Grade, Teacher, Performance, Attendance, Invoice, Payment, Enrollment, Subject
 from .serializers import StudentSerializer, ParentSerializer, GradeSerializer, TeacherSerializer, PerformanceSerializer, AttendanceSerializer, InvoiceSerializer, PaymentSerializer, EnrollmentSerializer, SubjectSerializer
 from .permissions import AllRecordsPermission
 from records.views import is_admin, is_student, is_teacher, is_parent
@@ -14,7 +14,7 @@ from rest_framework.permissions import IsAuthenticated
 class StudentViewSet(viewsets.ModelViewSet):
     serializer_class = StudentSerializer
     permission_classes = [IsAuthenticated, AllRecordsPermission]
-
+    
     def get_queryset(self):
         '''Restrict students and parents to view of their own/their children's records'''
         user = self.request.user
@@ -58,7 +58,7 @@ class ParentViewSet(viewsets.ModelViewSet):
 class GradeViewSet(viewsets.ModelViewSet):
     serializer_class = GradeSerializer
     permission_classes = [IsAuthenticated, AllRecordsPermission]
-
+    
     def get_queryset(self):
         '''Restrict parents/students to view of their own/their parent's records'''
         user = self.request.user
@@ -73,14 +73,14 @@ class GradeViewSet(viewsets.ModelViewSet):
         elif is_teacher(user) or is_admin(user):
             return Grade.objects.all()
         else:
-            return Parent.objects.none()
+            return Grade.objects.none()
 
 
 # Subject ViewSet view
 class SubjectViewSet(viewsets.ModelViewSet):
     serializer_class = SubjectSerializer
     permission_classes = [IsAuthenticated, AllRecordsPermission]
-
+    
     def get_queryset(self):
         '''All roles can see Subject model information'''
         return Subject.objects.all()
@@ -90,7 +90,7 @@ class SubjectViewSet(viewsets.ModelViewSet):
 class TeacherViewSet(viewsets.ModelViewSet):
     serializer_class = TeacherSerializer
     permission_classes = [IsAuthenticated, AllRecordsPermission]
-
+    
     def get_queryset(self):
         '''All roles can see Teacher model information'''
         return Teacher.objects.all()
@@ -124,7 +124,7 @@ class PerformanceViewSet(viewsets.ModelViewSet):
 class AttendanceViewSet(viewsets.ModelViewSet):
     serializer_class = AttendanceSerializer
     permission_classes = [IsAuthenticated, AllRecordsPermission]
-
+    
     def get_queryset(self):
         '''
         Restrict students and parents to view of their own/their children's attendance records
@@ -148,7 +148,7 @@ class AttendanceViewSet(viewsets.ModelViewSet):
 class InvoiceViewSet(viewsets.ModelViewSet):
     serializer_class = InvoiceSerializer
     permission_classes = [IsAuthenticated, AllRecordsPermission]
-
+    
     def get_queryset(self):
         '''
         Restrict students and parents to view of their own/their children's invoice records
@@ -172,7 +172,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 class PaymentViewSet(viewsets.ModelViewSet):
     serializer_class = PaymentSerializer
     permission_classes = [IsAuthenticated, AllRecordsPermission]
-
+    
     def get_queryset(self):
         '''
         Restrict students and parents to view of their own/their children's payment records
@@ -195,8 +195,8 @@ class PaymentViewSet(viewsets.ModelViewSet):
 class EnrollmentViewSet(viewsets.ModelViewSet):
     serializer_class = EnrollmentSerializer
     permission_classes = [IsAuthenticated, AllRecordsPermission]
-
-     def get_queryset(self):
+    
+    def get_queryset(self):
         '''
         Restrict students and parents to view of their own/their children's enrollment records
         '''
