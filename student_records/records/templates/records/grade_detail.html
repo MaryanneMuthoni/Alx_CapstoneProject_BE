@@ -3,22 +3,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Grade Detail</title>
+    <title>Student Detail</title>
 </head>
 <body>
-	<h1>Grade: {{ student.first_name }} {{ student.last_name }}</h1>
+	<h1>Grade Information</h1>
 
-	<h2>Grade Information</h2>
 	<ul>
-        	<li>Gender: {{ student.get_gender_display }}</li>
-        	<li>Date of Birth: {{ student.date_of_birth }}</li>
-		<li>Address: {{ student.address }}</li>
-		<li>Email: {{ student.student_email }}</li>
-		<li>Status: {{ student.get_status_display }}</li>
-		<li>Date of Admission: {{ student.date_of_admission }}</li>
-		{% if student.profile_photo %}
-        	<li><img src="{{ student.profile_photo.url }}" alt="Profile Photo" width="150"></li>
-		{% endif %}
+        	<li>Name  : {{ grade.name }}</li>
+        	<li>Stream: {{ grade.stream }}</li>
 	</ul>
 </body>
 </html>

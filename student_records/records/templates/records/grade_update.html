@@ -1,22 +1,20 @@
 {% load static %}
-<!-- enrollment_delete.html -->
+<!-- grade_update.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Delete enrollment</title>
+    <title>Update grade</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-    <h2>Delete enrollment</h2>
-
-    <p>Are you sure you want to delete {{ enrollment.id }}?</p>
+	<h2>Update {{ grade.name }} {{ grade.stream }}</h2>
 
     <form method="post">
     	{% csrf_token %}
     	{{ form.as_p }}
-    <button type="submit">Yes</button>
-    <a href="{% url 'enrollments' %}">Cancel</a>
+    <button type="submit">Save</button>
+    <a href="{% url 'grades' %}">Cancel</a>
 </form>
 </body>
 </html>

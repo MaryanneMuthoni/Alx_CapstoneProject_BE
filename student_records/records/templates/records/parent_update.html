@@ -1,20 +1,20 @@
 {% load static %}
-<!-- student_update.html -->
+<!-- parent_update.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Update student</title>
+    <title>Update parent</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-	<h2>Update {{student.first_name}} {{student.last_name}}</h2>
+	<h2>Update {{ parent.full_name }}?</h2>
 
     <form method="post">
     	{% csrf_token %}
     	{{ form.as_p }}
     <button type="submit">Save</button>
-    <a href="{% url 'students' %}">Cancel</a>
+    <a href="{% url 'parents' %}">Cancel</a>
 </form>
 </body>
 </html>

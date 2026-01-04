@@ -1,24 +1,20 @@
-<!-- student_detail.html -->
+<!-- invoice_detail.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Student Detail</title>
+    <title>Invoice Detail</title>
 </head>
 <body>
-	<h1>Student: {{ student.first_name }} {{ student.last_name }}</h1>
+	<h1>Invoice details:</h1>
 
-	<h2>Personal Information</h2>
 	<ul>
-        	<li>Gender: {{ student.get_gender_display }}</li>
-        	<li>Date of Birth: {{ student.date_of_birth }}</li>
-		<li>Address: {{ student.address }}</li>
-		<li>Email: {{ student.student_email }}</li>
-		<li>Status: {{ student.get_status_display }}</li>
-		<li>Date of Admission: {{ student.date_of_admission }}</li>
-		{% if student.profile_photo %}
-        	<li><img src="{{ student.profile_photo.url }}" alt="Profile Photo" width="150"></li>
-		{% endif %}
+        	<li>Total amount:     {{ student.total_amount }}</li>
+        	<li>Amount due  :     {{ student.amount_due }}</li>
+		<li>Payment due date: {{ student.payment_due_date }}</li>
+		<li>Status: 	      {{ student.status }}</li>
+		<li>Academic year:    {{ invoice.academic_year }}</li>
+		<li>Term:  	      {{ invoice.term }}</li>
 	</ul>
 </body>
 </html>
