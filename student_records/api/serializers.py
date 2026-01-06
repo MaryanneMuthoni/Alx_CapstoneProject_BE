@@ -1,11 +1,33 @@
 from rest_framework import serializers
 from accounts.models import CustomUser
 from records.models import Student, Teacher, Parent, Grade, Subject, Performance, Attendance, Invoice, Payment, Enrollment
+from django.contrib.auth.password_validation import validate_password
 
-class UserSerializer(serializers.ModelSerializer):
+class UserRegistrationSerializer(serializers.ModelSerializer):
+    password1 = serializers.CharField(write_only=True, required=True, validators=[validate_password])
+    password2 = serializers.CharField(write_only=True, required=True)
+
     class Meta:
-        model =CustomUser
-        fields = ("id", "email", "phone_number", "profile_picture")
+        model = CustomUser
+        fields = ('username', 'email', 'phone_number', 'password1', 'password2')
+
+    def validate(self, attrs):
+        if attrs['password1'] != attrs['password2']:
+            raise serializers.ValidationError({"password": "Passwords must match."})
+        return attrs
+
+    def create(self, validated_data):
+        # Remove password1 and password2 from validated_data
+        password = validated_data.pop('password1')
+        validated_data.pop('password2')
+
+        # Create the user without passwords
+        user = CustomUser(**validated_data)
+
+        # Set password properly
+        user.set_password(password)
+        user.save()
+        return user
 
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:

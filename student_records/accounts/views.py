@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.views.generic import CreateView, TemplateView
 from django.urls import reverse_lazy
-from django.contrib.auth.forms import UserCreationCustomForm
+from .forms import UserCreationCustomForm
 
 # Create your views here.
 

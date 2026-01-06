@@ -1,12 +1,37 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 from records.models import Student, Parent, Grade, Teacher, Performance, Attendance, Invoice, Payment, Enrollment, Subject
-from .serializers import StudentSerializer, ParentSerializer, GradeSerializer, TeacherSerializer, PerformanceSerializer, AttendanceSerializer, InvoiceSerializer, PaymentSerializer, EnrollmentSerializer, SubjectSerializer
+from .serializers import StudentSerializer, ParentSerializer, GradeSerializer, TeacherSerializer, PerformanceSerializer, AttendanceSerializer, InvoiceSerializer, PaymentSerializer, EnrollmentSerializer, SubjectSerializer, UserRegistrationSerializer
 from .permissions import AllRecordsPermission
 from records.views import is_admin, is_student, is_teacher, is_parent
-from rest_framework.permissions import IsAuthenticated
-
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework import generics
+from accounts.models import CustomUser
+from rest_framework.response import Response
+from rest_framework import status
 # Create your views here.
+
+
+class UserRegistrationAPIView(generics.CreateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserRegistrationSerializer
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=400)
+        user = serializer.save()
+        return Response({
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "phone_number": user.phone_number
+            },
+            "message": "User registered successfully."
+        }, status=201)
+
 
 # DRF ViewSet views- do all CRUD operations
 # =========================================

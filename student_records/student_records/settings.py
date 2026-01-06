@@ -131,8 +131,7 @@ LOGOUT_REDIRECT_URL = '/accounts/profile'
 AUTH_USER_MODEL = "accounts.CustomUser"
 
 AUTHENTICATION_BACKENDS = [
-    'accounts.backends.PhoneEmailBackend',  # Custom backend for phone_number and email
-    'django.contrib.auth.backends.ModelBackend',  # Keep the default backend as a fallback
+    'django.contrib.auth.backends.ModelBackend',
 ]
 
 REST_FRAMEWORK = {
