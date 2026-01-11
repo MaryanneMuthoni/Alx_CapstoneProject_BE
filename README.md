@@ -162,3 +162,55 @@ ID, student_id(ForeignKey), class_id(ForeignKey), academic_year, date_enrolled, 
 | Delete particular enrollment | DELETE |/enrollments/{id}/ |
 
 11. **Grade/Class:**
+
+ID, name, teacher_id(ForeignKeyField linking with Teacher), stream.
+
+| Description | Method | Enpoint|
+|-------------|--------|--------|
+| Get all classes | GET | /classes/|
+| Get particular class record | GET | /classes/{id}/ |
+| Create new class | POST |/classes/|
+| Update particular class record | PUT | /classes/{id}/ |
+| Delete particular class | DELETE |/classes/{id}/ |
+
+
+### API Documentation
+
+**To register:**
+**api: http://127.0.0.1:8000/api/register/**
+
+```
+{
+  "username": "stacey_mwende",
+  "email": "stacey.mwende@gmail.com",
+  "phone_number": 254712777777,
+  "password1": "Password123##",
+  "password2": "Password123##"
+}
+```
+
+**To get token for login:**
+**api: http://127.0.0.1:8000/api/login/**
+
+```
+{
+  "username": "stacey_mwende"
+  "password": "Password123##"
+}
+```
+
+**To register a new student:**
+**api: http://127.0.0.1:8000/api/students/**
+
+```
+{
+  "first_name": "Angela",
+  "last_name": "Kwamboka",
+  "gender": "F",
+  "date_of_birth": "2014-06-30",
+  "address": "100 Mountain View",
+  "status": "Enrolled",
+  "date_of_admission": "2019-01-11",
+  "grade": 1
+}
+```
